@@ -1,0 +1,200 @@
+import {
+  MapContainer,
+  ImageOverlay,
+  Marker,
+  Popup,
+  SVGOverlay,
+} from "react-leaflet";
+import floorplan from "./assets/office.png";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import { useState } from "react";
+
+const signalStrengthData = [
+  {
+    model: "RUCKUS R670",
+    manufacturer: "RUCKUS Networks",
+    signal_strength_0_to_5_metres: "-45 dBm",
+    signal_strength_5_to_15_metres: "-60 dBm",
+    signal_strength_15_to_30_metres: "-70 dBm",
+    signal_strength_30_to_50_metres: "-80 dBm"
+  }
+];
+
+// Function to convert dBm value to offset percentage
+function dBmToOffset(dBm) {
+  // Define the range of dBm values. Adjust these values based on your specific case.
+  const minDbm = -80; // Weakest signal (e.g., -80 dBm)
+  const maxDbm = -45; // Strongest signal (e.g., -45 dBm)
+
+  // Normalize the dBm to a percentage in the range 0 to 100
+  const offset = ((dBm - minDbm) / (maxDbm - minDbm)) * 100;
+
+  // Ensure that the offset stays within 0 to 100% range
+  return Math.min(Math.max(offset, 0), 100);
+}
+
+// Using the data from signalStrengthData
+const modelData = signalStrengthData[0];
+
+const signalStrengthOffsets = {
+  signal_strength_0_to_5_metres_offset: dBmToOffset(parseInt(modelData.signal_strength_0_to_5_metres)),
+  signal_strength_5_to_15_metres_offset: dBmToOffset(parseInt(modelData.signal_strength_5_to_15_metres)),
+  signal_strength_15_to_30_metres_offset: dBmToOffset(parseInt(modelData.signal_strength_15_to_30_metres)),
+  signal_strength_30_to_50_metres_offset: dBmToOffset(parseInt(modelData.signal_strength_30_to_50_metres))
+};
+
+
+function App() {
+  const imageWidth = 1920;
+  const imageHeight = 1080;
+
+  const initialAddressPoints = [
+    [430, 380],
+    [610, 1530],
+    [910, 1700],
+  ];
+
+  const [addressPoints, setAddressPoints] = useState(initialAddressPoints);
+
+  const bounds = [
+    [0, 0],
+    [imageHeight, imageWidth],
+  ];
+
+  const handleMarkerDragEnd = (event, index) => {
+    let { lat, lng } = event.target.getLatLng();
+
+    // Constrain coordinates to the bounds of the image
+    lat = Math.min(Math.max(lat, 0), imageHeight);
+    lng = Math.min(Math.max(lng, 0), imageWidth);
+
+    setAddressPoints((prevPoints) => {
+      const newPoints = [...prevPoints];
+      newPoints[index] = [lat, lng];
+      return newPoints;
+    });
+  };
+
+  const createAP = () => {
+    // Add a new marker at the center of the image
+    setAddressPoints((prevPoints) => [
+      ...prevPoints,
+      [imageHeight / 2, imageWidth / 2],
+    ]);
+  };
+
+  const deleteMarker = (index) => {
+    setAddressPoints((prevPoints) => {
+      const newPoints = [...prevPoints];
+      newPoints.splice(index, 1); // Remove the marker at the given index
+      return newPoints;
+    });
+  };
+
+  console.log("signalStrengthOffsets: " + JSON.stringify(signalStrengthOffsets));
+
+  return (
+    <div style={{ height: "100vh", width: "100vw" }}>
+      <button onClick={createAP} style={{ position: "absolute", zIndex: 1000 }}>
+        Add a AP Point
+      </button>
+      <MapContainer
+        zoom={-1}
+        center={[imageHeight / 2, imageWidth / 2]}
+        minZoom={-2}
+        bounds={bounds}
+        style={{ height: "100%", width: "100%" }}
+        crs={L.CRS.Simple}
+      >
+        <ImageOverlay zIndex={1} url={floorplan} bounds={bounds} />
+
+        {addressPoints.map(([y, x], index) => (
+
+          <Marker
+
+            key={index}
+            position={[y, x]}
+            draggable={true}
+            eventHandlers={{
+              dragend: (event) => handleMarkerDragEnd(event, index),
+            }}
+          >
+            <Popup>
+              <div>
+                <p>Marker at [{y.toFixed(0)}, {x.toFixed(0)}]</p>
+                <button
+                  onClick={() => deleteMarker(index)}
+                  style={{ backgroundColor: "red", color: "white", padding: "5px" }}
+                >
+                  Delete Marker
+                </button>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+
+        {/* 
+        <SVGOverlay bounds={bounds} style={{ pointerEvents: "none" }}>
+          <defs>
+            <radialGradient id="wifiGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="40%" stopColor="green" stopOpacity={0.8} />
+              <stop offset="80%" stopColor="yellow" stopOpacity={0.8} />
+              <stop offset="85%" stopColor="orange" stopOpacity={0.75} />
+              <stop offset="100%" stopColor="red" stopOpacity={0.2} />
+            </radialGradient>
+          </defs>
+
+          {addressPoints.map(([y, x], index) => {
+            const cxPercent = ((x / imageWidth) * 100).toFixed(2);
+            const cyPercent = ((1 - y / imageHeight) * 100).toFixed(2);
+
+            return (
+              <circle
+                key={index}
+                cx={`${cxPercent}%`}
+                cy={`${cyPercent}%`}
+                r="20%"
+                fill="url(#wifiGradient)"
+                opacity="0.8"
+              />
+            );
+          })}
+        </SVGOverlay> */}
+
+
+        // SVG component using dynamic offsets
+        <SVGOverlay bounds={bounds} style={{ pointerEvents: "none" }}>
+          <defs>
+            <radialGradient id="wifiGradient" cx="50%" cy="50%" r="50%">
+              <stop offset={`${signalStrengthOffsets.signal_strength_30_to_50_metres_offset}%`} stopColor="green" stopOpacity={0.8} />
+              <stop offset={`${signalStrengthOffsets.signal_strength_15_to_30_metres_offset}%`} stopColor="yellow" stopOpacity={0.8} />
+              <stop offset={`${signalStrengthOffsets.signal_strength_5_to_15_metres_offset}%`} stopColor="orange" stopOpacity={0.75} />
+              <stop offset={`${signalStrengthOffsets.signal_strength_0_to_5_metres_offset}%`} stopColor="red" stopOpacity={0.2} />
+            </radialGradient>
+          </defs>
+
+          {addressPoints.map(([y, x], index) => {
+            const cxPercent = ((x / imageWidth) * 100).toFixed(2);
+            const cyPercent = ((1 - y / imageHeight) * 100).toFixed(2);
+
+            return (
+              <circle
+                key={index}
+                cx={`${cxPercent}%`}
+                cy={`${cyPercent}%`}
+                r="20%"
+                fill="url(#wifiGradient)"
+                opacity="0.8"
+              />
+            );
+          })}
+        </SVGOverlay>
+
+
+      </MapContainer>
+    </div>
+  );
+}
+
+export default App;
