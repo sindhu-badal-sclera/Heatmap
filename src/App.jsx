@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Heatmap from "./heatmap";
-import Cctv from "./cctv";
+import Cctv from "./Cctv";
 
 function App() {
   return (
