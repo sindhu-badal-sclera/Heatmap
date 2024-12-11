@@ -96,7 +96,7 @@ function Cctv() {
     },
   ];
  
-  // Initial state with more comprehensive camera point structure
+  // Initial state 
   const [cctvPoints, setCCTVPoints] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
   console.log(cctvPoints);
@@ -112,8 +112,8 @@ function Cctv() {
         {
           position: [imageHeight / 2, imageWidth / 2],
           model: selectedModel,
-          rotationAngle: 0, // Default rotation
-          fillOpacity: 0.3, // Default opacity
+          rotationAngle: 0, //fov rotation angle
+          fillOpacity: 0.3, //opacity
         },
       ]);
     } else {
@@ -124,7 +124,7 @@ function Cctv() {
   const handleMarkerDragEnd = (event, index) => {
     let { lat, lng } = event.target.getLatLng();
  
-    // Constrain coordinates to the bounds of the image
+    // fix the coordinates to bounds of the image
     lat = Math.min(Math.max(lat, 0), imageHeight);
     lng = Math.min(Math.max(lng, 0), imageWidth);
  
@@ -147,9 +147,11 @@ function Cctv() {
     setCCTVPoints((prevPoints) => prevPoints.filter((_, i) => i !== index));
   };
 
+  console.log(cctvPoints)
+
   return (
     <div style={{ height: "100vh", width: "100vw", display: "flex" }}>
-      {/* Sidebar with Enhanced Controls */}
+      {/* sidebar and dropdown for different camera models and their specifications */}
       <div
         style={{
           width: "300px",
@@ -161,7 +163,7 @@ function Cctv() {
       >
         <h3>Camera Configuration</h3>
  
-        {/* Camera Model Selection */}
+        {/* selecting the camera model */}
         <div style={{ marginBottom: "15px" }}>
           <label>Select Camera Model:</label>
           <select
@@ -199,16 +201,9 @@ function Cctv() {
         >
           Add Camera Point
         </button>
-        {/* <div>
-          Rotation of the Angle:
-          <input type="range" />
-          <br />
-          Distance of the Camera FOV:
-          <input type="range" />
-        </div> */}
       </div>
  
-      {/* Map Container */}
+      {/* Map Container- contains floormap using react leaflet */}
       <MapContainer
         zoom={-1}
         center={[imageHeight / 2, imageWidth / 2]}
@@ -237,9 +232,9 @@ function Cctv() {
                 <div style={{ minWidth: "250px" }}>
                   <h4>{model.name} Details</h4>
  
-                  {/* Rotation Control */}
+                  {/* Rotation Control to camera angles */}
                   <div style={{ marginBottom: "10px" }}>
-                    {/* <label>Rotation: {rotationAngle}</label> */}
+                    
                     <label>Swipe to Rotate</label>
                     <input
                       type="range"
@@ -254,21 +249,8 @@ function Cctv() {
                       style={{ width: "100%" }}
                     />
                   </div>
- 
-                  {/* Opacity Control
-                <div style={{ marginBottom: "10px" }}>
-                  <label>Field of View Opacity: {(fillOpacity * 100).toFixed(0)}%</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={fillOpacity}
-                    onChange={(e) => updateCameraSettings(index, { fillOpacity: Number(e.target.value) })}
-                    style={{ width: "100%" }}
-                  />
-                </div> */}
- 
+
+                {/* Delete camera button */}
                   <button
                     onClick={() => deleteMarker(index)}
                     style={{
@@ -290,7 +272,8 @@ function Cctv() {
                 startAngle={0}
                 stopAngle={model.maxFoV}
                 rotationAngle={rotationAngle}
-                fillOpacity={fillOpacity}
+                 fillOpacity={fillOpacity}
+               
               />
             </Marker>
           )

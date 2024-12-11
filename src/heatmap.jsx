@@ -1,5 +1,3 @@
-
-
 import {
     MapContainer,
     ImageOverlay,
@@ -32,31 +30,16 @@ import {
     }
   ];
   
-  // // Function to convert dBm value to offset percentage
-  // function dBmToOffset(dBm) {
-  //   // Define the range of dBm values. Adjust these values based on your specific case.
-  //   const minDbm = -80; // Weakest signal (e.g., -80 dBm)
-  //   const maxDbm = -45; // Strongest signal (e.g., -45 dBm)
-  
-  //   // Normalize the dBm to a percentage in the range 0 to 100
-  //   const offset = ((dBm - minDbm) / (maxDbm - minDbm)) * 100;
-  
-  //   // Ensure that the offset stays within 0 to 100% range
-  //   return Math.min(Math.max(offset, 1), 99);
-  // }
-  
-  
   function dBmToOffset(dBm, strongestDbm = -45, weakestDbm = -90) {
     console.log(dBm)
     // Normalize the dBm value to a percentage between 0% and 100%
     const offset = ((dBm - strongestDbm) / (weakestDbm - strongestDbm)) * 100;
   
-    // Clamp the offset to stay in range (0% to 100% for intermediate stops)
+    // Tie the offset to stay in range (0% to 100% for intermediate stops)
     return Math.min(Math.max(offset, 1), 99);
   }
   
-  
-  
+   
   // Using the data from signalStrengthData
   const modelData = signalStrengthData[0];
   console.log(modelData)
@@ -67,13 +50,14 @@ import {
     signal_strength_30_to_50_metres_offset: dBmToOffset(parseInt(modelData.signal_strength_30_to_50_metres))
   };
   
+  // Checking offsets
   console.log(signalStrengthOffsets);
-  // Check if offsets look like: { signal_strength_0_to_5_metres_offset: 10, ... }
   
   function Heatmap() {
     const imageWidth = 1920;
     const imageHeight = 1080;
   
+
     const initialAddressPoints = [
       [430, 380],
       [610, 1530],
@@ -119,6 +103,7 @@ import {
   
     console.log("signalStrengthOffsets: " + JSON.stringify(signalStrengthOffsets));
 
+    //Legends UI - To display differnet signal strength
     const legendStyles = {
         container: {
           position: "fixed",
@@ -213,6 +198,7 @@ import {
         <button onClick={createAP} style={{ position: "absolute", zIndex: 1000,top:"50px", left :"70px" }}>
           Add a Router Point
         </button>
+
         <MapContainer
           zoom={-1}
           center={[imageHeight / 2, imageWidth / 2]}
@@ -248,45 +234,10 @@ import {
             </Marker>
           ))}
   
-          {/* 
-          <SVGOverlay bounds={bounds} style={{ pointerEvents: "none" }}>
-            <defs>
-              <radialGradient id="wifiGradient" cx="50%" cy="50%" r="50%">
-                <stop offset="40%" stopColor="green" stopOpacity={0.8} />
-                <stop offset="80%" stopColor="yellow" stopOpacity={0.8} />
-                <stop offset="85%" stopColor="orange" stopOpacity={0.75} />
-                <stop offset="100%" stopColor="red" stopOpacity={0.2} />
-              </radialGradient>
-            </defs>
-  
-            {addressPoints.map(([y, x], index) => {
-              const cxPercent = ((x / imageWidth) * 100).toFixed(2);
-              const cyPercent = ((1 - y / imageHeight) * 100).toFixed(2);
-  
-              return (
-                <circle
-                  key={index}
-                  cx={`${cxPercent}%`}
-                  cy={`${cyPercent}%`}
-                  r="20%"
-                  fill="url(#wifiGradient)"
-                  opacity="0.8"
-                />
-              );
-            })}
-          </SVGOverlay> */}
-  
   
            {/* SVG component using dynamic offsets */}
           <SVGOverlay bounds={bounds} style={{ pointerEvents: "none" }}>
             <defs>
-              {/* <radialGradient id="wifiGradient" cx="50%" cy="50%" r="50%"> */}
-              {/* <stop offset={`${signalStrengthOffsets.signal_strength_0_to_5_metres_offset}%`} stopColor="green" stopOpacity={0.2} />
-              <stop offset={`${signalStrengthOffsets.signal_strength_5_to_15_metres_offset}%`} stopColor="yellow" stopOpacity={0.2} />
-              <stop offset={`${signalStrengthOffsets.signal_strength_15_to_30_metres_offset}%`} stopColor="orange" stopOpacity={0.2} />
-              <stop offset={`${signalStrengthOffsets.signal_strength_30_to_50_metres_offset}%`} stopColor="red" stopOpacity={0.2} />
-               */}
-              {/* </radialGradient> */}
               <radialGradient id="wifiGradient" cx="50%" cy="50%" r="50%">
                 <stop offset={`${signalStrengthOffsets.signal_strength_0_to_5_metres_offset}%`} stopColor="green" stopOpacity={0.8} />
                 <stop offset={`${signalStrengthOffsets.signal_strength_5_to_15_metres_offset}%`} stopColor="yellow" stopOpacity={0.8} />
