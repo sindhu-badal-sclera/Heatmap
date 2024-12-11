@@ -6,14 +6,14 @@ import Cctv from "./cctv";
 function App() {
   return (
     <Router>
-      <div>
-        {/* Navigation Bar */}
+      <div style={{width:'100vw', height:'100vh'}} >
+        {/* Navigation bar */}
         <nav
           style={{
             padding: "10px",
             backgroundColor: "#282c34",
             color: "white",
-            display: "flex",
+            display: "flex",  
             justifyContent: "space-around",
           }}
         >
