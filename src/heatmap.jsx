@@ -35,12 +35,11 @@ import {
     // Normalize the dBm value to a percentage between 0% and 100%
     const offset = ((dBm - strongestDbm) / (weakestDbm - strongestDbm)) * 100;
   
-    // Clamp the offset to stay in range (0% to 100% for intermediate stops)
+    // Tie the offset to stay in range (0% to 100% for intermediate stops)
     return Math.min(Math.max(offset, 1), 99);
   }
   
-  
-  
+   
   // Using the data from signalStrengthData
   const modelData = signalStrengthData[0];
   console.log(modelData)
@@ -51,13 +50,14 @@ import {
     signal_strength_30_to_50_metres_offset: dBmToOffset(parseInt(modelData.signal_strength_30_to_50_metres))
   };
   
+  // Checking offsets
   console.log(signalStrengthOffsets);
-  // Check if offsets look like: { signal_strength_0_to_5_metres_offset: 10, ... }
   
   function Heatmap() {
     const imageWidth = 1920;
     const imageHeight = 1080;
   
+
     const initialAddressPoints = [
       [430, 380],
       [610, 1530],
@@ -103,6 +103,7 @@ import {
   
     console.log("signalStrengthOffsets: " + JSON.stringify(signalStrengthOffsets));
 
+    //Legends UI - To display differnet signal strength
     const legendStyles = {
         container: {
           position: "fixed",
@@ -197,6 +198,7 @@ import {
         <button onClick={createAP} style={{ position: "absolute", zIndex: 1000,top:"50px", left :"70px" }}>
           Add a Router Point
         </button>
+
         <MapContainer
           zoom={-1}
           center={[imageHeight / 2, imageWidth / 2]}

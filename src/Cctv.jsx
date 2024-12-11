@@ -96,7 +96,7 @@ function Cctv() {
     },
   ];
  
-  // Initial state with more comprehensive camera point structure
+  // Initial state 
   const [cctvPoints, setCCTVPoints] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
   console.log(cctvPoints);
