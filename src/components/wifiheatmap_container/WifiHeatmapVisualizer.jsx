@@ -5,14 +5,13 @@ import {
     Popup,
     SVGOverlay,
   } from "react-leaflet";
-  import floorplan from "./assets/office.png";
+  import floorplan from "../../assets/office.png";
   import "leaflet/dist/leaflet.css";
   import L from "leaflet";
   import { useState } from "react";
+  import "./WiFiSignalVisualizer.module.css";
 
-
-  import wifiIconUrl from "./assets/router.png";
-
+  import wifiIconUrl from "../../assets/router.png";
 
   const wifiIcon = new L.Icon({
     iconUrl: wifiIconUrl,
@@ -53,7 +52,7 @@ import {
   // Checking offsets
   console.log(signalStrengthOffsets);
   
-  function Heatmap() {
+  function WifiHeatmapVisualizer() {
     const imageWidth = 1920;
     const imageHeight = 1080;
   
@@ -195,6 +194,7 @@ import {
   
     return (
       <div style={{ height: "100vh", width: "100vw" }}>
+
         <button onClick={createAP} style={{ position: "absolute", zIndex: 1000,top:"50px", left :"70px" }}>
           Add a Router Point
         </button>
@@ -206,6 +206,7 @@ import {
           bounds={bounds}
           style={{ height: "100%", width: "100%" }}
           crs={L.CRS.Simple}
+          className="animated-map-container"
         >
           <ImageOverlay zIndex={1} url={floorplan} bounds={bounds} />
   
@@ -258,6 +259,7 @@ import {
                   r="20%"
                   fill="url(#wifiGradient)"
                   opacity="0.8"
+                  className="pulsing-circle"
                 />
               );
             })}
@@ -269,4 +271,4 @@ import {
     );
   }
   
-  export default Heatmap;
+  export default WifiHeatmapVisualizer;

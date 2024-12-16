@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   MapContainer,
@@ -7,14 +6,14 @@ import {
   Popup,
   useMap,
 } from "react-leaflet";
-import floorplan from "./assets/office.png";
+import floorplan from "../../assets/office.png";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "leaflet-semicircle";
  
 // Import the CCTV and WiFi icons
-import bulletCamIconUrl from "./assets/cctvs/bulletcam.jpg";
-import unvCamIconUrl from "./assets/cctvs/Unvcam.jpg";
+import bulletCamIconUrl from "../../assets/cctvs/bulletcam.jpg";
+import unvCamIconUrl from "../../assets/cctvs/Unvcam.jpg";
  
 
 const bulletCameraIcon = new L.Icon({
@@ -49,7 +48,7 @@ function SemiCircleComponent({
       color: "blue",
       fillColor: "rgba(0, 0, 255, 0.3)",
       fillOpacity: fillOpacity,
-      weight: 1,
+      weight: 0,
     });
  
     semiCircle.addTo(map);
@@ -71,7 +70,7 @@ function SemiCircleComponent({
   return null;
 }
 
-function Cctv() {
+function CameraCoverageView() {
 
   const imageWidth = 1920;
   const imageHeight = 1080;
@@ -271,6 +270,7 @@ function Cctv() {
                 radius={model.maxDistance}
                 startAngle={0}
                 stopAngle={model.maxFoV}
+                
                 rotationAngle={rotationAngle}
                  fillOpacity={fillOpacity}
                
@@ -283,5 +283,6 @@ function Cctv() {
   )
 }
 
-export default Cctv
+export default CameraCoverageView
+
 
